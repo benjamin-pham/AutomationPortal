@@ -5,13 +5,13 @@
 dotnet build
 
 # Run API (target .NET 10)
-dotnet run --project src/MyProject.API/MyProject.API.csproj
+dotnet run --project src/AutomationPortal.API/AutomationPortal.API.csproj
 
 # Run all tests
 dotnet test
 
 # Run a single test project
-dotnet test tests/MyProject.Application.UnitTests/
+dotnet test tests/AutomationPortal.Application.UnitTests/
 
 # Run a specific test
 dotnet test --filter "FullyQualifiedName~SomeTestName"
@@ -22,27 +22,6 @@ No solution file — this is a modern .NET 10 project using directory-level buil
 # Architecture
 
 Clean Architecture with 4 layers (strict unidirectional dependency: API → Application → Domain; Infrastructure → Domain):
-
-```
-        ┌─────────────────────────────────────────────────────┐
-        │                     MyProject.API                   │
-        │            (Endpoints, Middleware, DI wiring)       │
-        └───────────────┬─────────────────┬───────────────────┘
-                        │ depends on      │ registers (DI only)
-                        ▼                 ▼
-        ┌─────────────────────────┐  ┌─────────────────────────────┐
-        │  MyProject.Application  │  │   MyProject.Infrastructure  │
-        │ (Commands, Queries,     │  │  (EF Core, Repositories,    │
-        │  Handlers,Validators)   │  │   DbContext)                │
-        └───────────┬─────────────┘  └───────────────┬─────────────┘
-                    │ depends on                     │ depends on
-                    ▼                                ▼
-            ┌──────────────────────────────────────────────┐
-            │                MyProject.Domain              │
-            │    (Entities, Abstractions, Enums, Result)   │
-            └──────────────────────────────────────────────┘
-```
-
 
 ```
 src/
@@ -85,15 +64,15 @@ src/
 
 # Key Patterns
 
-**Endpoint registration** — Implement `IEndpoint`, place in `src/MyProject.API/Endpoints/`. The endpoint is picked up automatically; no manual registration needed.
+**Endpoint registration** — Implement `IEndpoint`, place in `src/AutomationPortal.API/Endpoints/`. The endpoint is picked up automatically; no manual registration needed.
 
-**Commands/Queries** — Add a MediatR `IRequest<Result<T>>` + handler in `src/MyProject.Application/Features/{Feature}/`. Add a FluentValidation `AbstractValidator<TRequest>` in the same folder; the pipeline runs it automatically.
+**Commands/Queries** — Add a MediatR `IRequest<Result<T>>` + handler in `src/AutomationPortal.Application/Features/{Feature}/`. Add a FluentValidation `AbstractValidator<TRequest>` in the same folder; the pipeline runs it automatically.
 
 **Result pattern** — Domain errors use `Result<T>` (not exceptions). Use `Result.Success(value)` / `Result.Failure(error)` and check `result.IsFailure` in handlers or endpoints.
 
 **Audit trail** — All entities extending `BaseEntity` automatically get `CreatedAt`, `CreatedBy`, `UpdatedAt`, `UpdatedBy` set by `AppDbContext.SaveChangesAsync`. `IsDeleted` enables soft deletes.
 
-**EF Core config** — Entity configurations go in `src/MyProject.Infrastructure/Data/Configurations/` using Fluent API with snake_case naming convention.
+**EF Core config** — Entity configurations go in `src/AutomationPortal.Infrastructure/Data/Configurations/` using Fluent API with snake_case naming convention.
 
 # Testing
 

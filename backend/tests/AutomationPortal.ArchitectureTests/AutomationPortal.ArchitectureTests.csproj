@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="NetArchTest.Rules" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AutomationPortal.Domain\AutomationPortal.Domain.csproj" />
+    <ProjectReference Include="..\..\src\AutomationPortal.Application\AutomationPortal.Application.csproj" />
+    <ProjectReference Include="..\..\src\AutomationPortal.Infrastructure\AutomationPortal.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\AutomationPortal.API\AutomationPortal.API.csproj" />
+  </ItemGroup>
+
+</Project>

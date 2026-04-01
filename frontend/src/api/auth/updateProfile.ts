@@ -1,14 +1,13 @@
 import { AxiosInstance } from "axios";
+
 export interface UpdateProfileRequest {
-  id: string;
-  username: string;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  phone?: string | null;
+  birthday?: string | null;
 }
 
-export interface UpdateProfileResponse {
-  id: string;
-  username: string;
-}
-
-export const updateProfile = (axios: AxiosInstance) => () => {
-  return axios.put<UpdateProfileResponse>("/auth/profile");
+export const updateProfile = (axios: AxiosInstance, data: UpdateProfileRequest) => () => {
+  return axios.put<void>("/api/auth/profile", data);
 };

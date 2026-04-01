@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AutomationPortal.Domain/AutomationPortal.Domain.csproj" />
+    <Project Path="src/AutomationPortal.Application/AutomationPortal.Application.csproj" />
+    <Project Path="src/AutomationPortal.Infrastructure/AutomationPortal.Infrastructure.csproj" />
+    <Project Path="src/AutomationPortal.API/AutomationPortal.API.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AutomationPortal.Domain.UnitTests/AutomationPortal.Domain.UnitTests.csproj" />
+    <Project Path="tests/AutomationPortal.Application.UnitTests/AutomationPortal.Application.UnitTests.csproj" />
+    <Project Path="tests/AutomationPortal.Infrastructure.IntegrationTests/AutomationPortal.Infrastructure.IntegrationTests.csproj" />
+    <Project Path="tests/AutomationPortal.API.IntegrationTests/AutomationPortal.API.IntegrationTests.csproj" />
+    <Project Path="tests/AutomationPortal.ArchitectureTests/AutomationPortal.ArchitectureTests.csproj" />
+  </Folder>
+</Solution>

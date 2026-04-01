@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios client instance for client-side API calls
 const axiosClientInstacne = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || '/api', // Default to '/api' if env not set
+  baseURL: 'http://localhost:3000', // Default to '/api' if env not set
   headers: {
     'Content-Type': 'application/json',
   },

@@ -5,10 +5,13 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  id: string;
-  username: string;
+export interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+  tokenType: string;
 }
+
 export const login = (axios: AxiosInstance, data: LoginRequest) => () => {
-  return axios.post<LoginResponse>("/auth/login", data);
+  return axios.post<TokenResponse>("/api/auth/login", data);
 };

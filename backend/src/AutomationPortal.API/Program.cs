@@ -1,0 +1,42 @@
+﻿using System.Reflection;
+using AutomationPortal.API.Endpoints;
+using AutomationPortal.API.Extensions;
+using AutomationPortal.Application;
+using AutomationPortal.Infrastructure;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// ── Serilog ──────────────────────────────────────────────────────────────────
+builder.Host.AddSerilogLogging();
+
+// ── Services ─────────────────────────────────────────────────────────────────
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddApiDocsServices();
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddAuthenticationSchemes(builder.Configuration);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddHealthChecks();
+
+// ── Pipeline ─────────────────────────────────────────────────────────────────
+var app = builder.Build();
+app.MapApiDocsEndpoints();
+app.UseExceptionHandler(o => { });
+app.UseCorrelationId();
+app.UseSerilogLogging();
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapEndpoints();
+app.MapHealthChecks("/health");
+
+app.MapFallback(async context =>
+{
+    context.Response.StatusCode = 404;
+    await context.Response.WriteAsync("Resource Not Found");
+});
+app.Run();
+
+// Expose Program for integration tests
+public partial class Program { }

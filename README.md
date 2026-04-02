@@ -129,3 +129,11 @@ src/app/(dashboard)/users/
 ### Stack
 
 Tailwind CSS v4, lucide-react icons, @tanstack/react-table, react-hook-form + zod, next-themes, sonner (toasts), recharts, axios.
+
+## Language of speckit Outputs
+
+All output produced by speckit commands (`/speckit.specify`, `/speckit.clarify`,
+`/speckit.plan`, `/speckit.tasks`, `/speckit.analyze`, `/speckit.implement`)
+MUST be written in **Vietnamese**. Code, file paths, identifiers, and
+code comments remain in English. Only prose, headings, descriptions,
+rationale, and task descriptions are in Vietnamese.

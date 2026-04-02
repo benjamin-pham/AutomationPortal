@@ -5,44 +5,17 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown, LayoutDashboard, type LucideIcon, SquareKanban, PackageSearch } from "lucide-react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { IMenuItem, menuItems } from './menu-item';
 
 // Menu items.
-interface IMenuItem {
-  title: string;
-  url?: string;
-  icon: LucideIcon;
-  subItems?: IMenuItem[];
-}
-const items: IMenuItem[] = [
-  {
-    title: "Dashboard",
-    url: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Reports",
-    icon: SquareKanban,
-    subItems: [
-      {
-        title: "Services",
-        url: "/reports/services",
-        icon: PackageSearch,
-      }
 
-    ]
-  },
-  {
-    title: "Datatable demo",
-    url: "/datatable",
-    icon: LayoutDashboard,
-  },
-]
+
 function AppSidebarContent() {
   return (
     <SidebarContent>
       <SidebarGroup>
         <SidebarMenu>
-          {items.map(item => (
+          {menuItems.map(item => (
             <SidebarMenuItem key={item.title}>
               <RenderMenuItem item={item} />
             </SidebarMenuItem>

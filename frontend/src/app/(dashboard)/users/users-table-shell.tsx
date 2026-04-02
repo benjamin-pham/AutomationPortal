@@ -12,7 +12,8 @@ import { getUsersColumns } from "./users-columns";
 import ViewUserDialog from "./view-user-dialog";
 import CreateUserDialog from "./create-user-dialog";
 import EditUserDialog from "./edit-user-dialog";
-import DeleteUserDialog from "./delete-user-dialog";
+import DeleteUserDialog from "./delete-user-dialog"
+import ResetPasswordDialog from "./reset-password-dialog";
 
 export default function UsersTableShell() {
   const [page, setPage] = useState(1);
@@ -24,6 +25,7 @@ export default function UsersTableShell() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<string | null>(null);
   const [deleteUser, setDeleteUser] = useState<{ id: string; username: string } | null>(null);
+  const [resetPasswordUserId, setResetPasswordUserId] = useState<string | null>(null);
 
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
@@ -58,7 +60,7 @@ export default function UsersTableShell() {
   };
 
   const columns = useMemo(
-    () => getUsersColumns(setViewUserId, setEditUserId, (id, username) => setDeleteUser({ id, username })),
+    () => getUsersColumns(setViewUserId, setEditUserId, (id, username) => setDeleteUser({ id, username }), setResetPasswordUserId),
     []
   );
 
@@ -81,6 +83,7 @@ export default function UsersTableShell() {
             data={data?.items ?? []}
             isLoading={isLoading}
             onSortChange={handleSortChange}
+            stripedPattern="odd"
           />
           {data && data.totalPages > 0 && (
             <DataPagination
@@ -130,6 +133,11 @@ export default function UsersTableShell() {
           setDeleteUser(null);
           fetchUsers();
         }}
+      />
+
+      <ResetPasswordDialog
+        userId={resetPasswordUserId}
+        onClose={() => setResetPasswordUserId(null)}
       />
     </div>
   );

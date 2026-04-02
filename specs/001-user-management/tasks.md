@@ -160,15 +160,15 @@
 
 ### Backend — User Story 6
 
-- [ ] T038 [P] [US6] Create `ResetUserPasswordCommand` (UserId, NewPassword, ConfirmPassword) and `ResetUserPasswordCommandValidator` (uses `PasswordValidator` for NewPassword, `Equal(x => x.NewPassword)` for ConfirmPassword) in `backend/src/AutomationPortal.Application/Features/Users/ResetUserPassword/`
-- [ ] T039 [US6] Implement `ResetUserPasswordCommandHandler`: load user → `UserErrors.NotFound` if null; hash `NewPassword` via `IPasswordHasher`; call `user.ResetPassword(hash)` (invalidates refresh token); `IUnitOfWork.SaveChangesAsync` in `backend/src/AutomationPortal.Application/Features/Users/ResetUserPassword/ResetUserPasswordCommandHandler.cs`
-- [ ] T040 [US6] Implement `ResetUserPasswordEndpoint`: `POST /api/users/{id}/reset-password`, `[Authorize]`, `WithName("ResetUserPassword")`, `WithTags("Users")`, returns 204 No Content, 404, or 422 in `backend/src/AutomationPortal.API/Endpoints/Users/ResetUserPasswordEndpoint.cs`
+- [X] T038 [P] [US6] Create `ResetUserPasswordCommand` (UserId, NewPassword, ConfirmPassword) and `ResetUserPasswordCommandValidator` (uses `PasswordValidator` for NewPassword, `Equal(x => x.NewPassword)` for ConfirmPassword) in `backend/src/AutomationPortal.Application/Features/Users/ResetUserPassword/`
+- [X] T039 [US6] Implement `ResetUserPasswordCommandHandler`: load user → `UserErrors.NotFound` if null; hash `NewPassword` via `IPasswordHasher`; call `user.ResetPassword(hash)` (invalidates refresh token); `IUnitOfWork.SaveChangesAsync` in `backend/src/AutomationPortal.Application/Features/Users/ResetUserPassword/ResetUserPasswordCommandHandler.cs`
+- [X] T040 [US6] Implement `ResetUserPasswordEndpoint`: `POST /api/users/{id}/reset-password`, `[Authorize]`, `WithName("ResetUserPassword")`, `WithTags("Users")`, returns 204 No Content, 404, or 422 in `backend/src/AutomationPortal.API/Endpoints/Users/ResetUserPasswordEndpoint.cs`
 
 ### Frontend — User Story 6
 
-- [ ] T041 [P] [US6] Implement `resetUserPassword(axios: AxiosInstance, id: string, data: ResetPasswordRequest): Promise<void>` in `frontend/src/api/users/resetUserPassword.ts`
-- [ ] T042 [US6] Create `reset-password-dialog.tsx`: zod schema with `newPassword` (min 8, ≥1 uppercase, ≥1 digit) + `confirmPassword` (`refine` equal check), uses `PasswordField`, calls `resetUserPassword`, shows sonner toast in `frontend/src/app/(dashboard)/users/reset-password-dialog.tsx`
-- [ ] T043 [US6] Add "Đặt lại mật khẩu" action button to `users-columns.tsx` actions column and `resetPasswordUserId` state to `users-table-shell.tsx`, wire `ResetPasswordDialog` in `frontend/src/app/(dashboard)/users/users-table-shell.tsx`
+- [X] T041 [P] [US6] Implement `resetUserPassword(axios: AxiosInstance, id: string, data: ResetPasswordRequest): Promise<void>` in `frontend/src/api/users/resetUserPassword.ts`
+- [X] T042 [US6] Create `reset-password-dialog.tsx`: zod schema with `newPassword` (min 8, ≥1 uppercase, ≥1 digit) + `confirmPassword` (`refine` equal check), uses `PasswordField`, calls `resetUserPassword`, shows sonner toast in `frontend/src/app/(dashboard)/users/reset-password-dialog.tsx`
+- [X] T043 [US6] Add "Đặt lại mật khẩu" action button to `users-columns.tsx` actions column and `resetPasswordUserId` state to `users-table-shell.tsx`, wire `ResetPasswordDialog` in `frontend/src/app/(dashboard)/users/users-table-shell.tsx`
 
 **Checkpoint**: Tất cả 6 user stories hoạt động độc lập — module quản lý người dùng hoàn chỉnh
 
@@ -178,8 +178,8 @@
 
 **Purpose**: Logging, exports, validation cuối
 
-- [ ] T044 [P] Add Serilog structured logging to all 6 handlers: `Log.Information` on success (with relevant entity IDs), `Log.Warning` on not-found; follow existing handler logging pattern in each `*Handler.cs` under `backend/src/AutomationPortal.Application/Features/Users/`
-- [ ] T045 [P] Create `usersApi(axios: AxiosInstance)` factory in `frontend/src/api/users/index.ts` wrapping all 6 functions; export TypeScript types from `types.ts`; register `users: usersApi(axios)` in `frontend/src/api/index.ts`
+- [X] T044 [P] Add Serilog structured logging to all 6 handlers: `Log.Information` on success (with relevant entity IDs), `Log.Warning` on not-found; follow existing handler logging pattern in each `*Handler.cs` under `backend/src/AutomationPortal.Application/Features/Users/`
+- [X] T045 [P] Create `usersApi(axios: AxiosInstance)` factory in `frontend/src/api/users/index.ts` wrapping all 6 functions; export TypeScript types from `types.ts`; register `users: usersApi(axios)` in `frontend/src/api/index.ts`
 - [ ] T046 Run end-to-end validation per `quickstart.md`: start backend + frontend, verify all 6 endpoints in Scalar UI, execute all dialog flows (view, create, edit, delete, reset password) on the `/users` page
 
 ---

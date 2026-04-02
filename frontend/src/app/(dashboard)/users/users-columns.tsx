@@ -2,12 +2,22 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
+import { MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { UserListItem } from "@/api/users/types";
 
 export function getUsersColumns(
   onView: (id: string) => void,
   onEdit: (id: string) => void,
-  onDelete: (id: string, username: string) => void
+  onDelete: (id: string, username: string) => void,
+  onResetPassword: (id: string) => void
 ): ColumnDef<UserListItem>[] {
   return [
     {
@@ -52,22 +62,27 @@ export function getUsersColumns(
       id: "actions",
       header: () => null,
       cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEdit(row.original.id)}
-          >
-            Chỉnh sửa
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onDelete(row.original.id, row.original.username)}
-          >
-            Xóa
-          </Button>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => onEdit(row.original.id)}>
+              Chỉnh sửa
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onResetPassword(row.original.id)}>
+              Đặt lại mật khẩu
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onDelete(row.original.id, row.original.username)}>
+              Xóa
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
     },
   ];

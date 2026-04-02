@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <Table className="rounded-md border-collapse">
+    <Table className="border-separate border-spacing-0">
       <TableHeader className="sticky top-0 bg-background z-10">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id} className="border-b">

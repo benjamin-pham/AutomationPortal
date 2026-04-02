@@ -3,10 +3,13 @@ using AutomationPortal.Application.Abstractions.Data;
 using AutomationPortal.Application.Abstractions.Messaging;
 using AutomationPortal.Application.Shared.Dtos;
 using AutomationPortal.Domain.Abstractions;
+using Microsoft.Extensions.Logging;
 
 namespace AutomationPortal.Application.Features.Users.GetUsers;
 
-internal sealed class GetUsersQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+internal sealed class GetUsersQueryHandler(
+    ISqlConnectionFactory sqlConnectionFactory,
+    ILogger<GetUsersQueryHandler> logger)
     : IQueryHandler<GetUsersQuery, PagedResponse<UserListItemResponse>>
 {
     private static readonly HashSet<string> AllowedSortColumns =
@@ -43,7 +46,7 @@ internal sealed class GetUsersQueryHandler(ISqlConnectionFactory sqlConnectionFa
 
         var dataSql = $"""
             SELECT
-                id         AS UserId,
+                id         AS Id,
                 first_name AS FirstName,
                 last_name  AS LastName,
                 username   AS Username,
@@ -65,6 +68,12 @@ internal sealed class GetUsersQueryHandler(ISqlConnectionFactory sqlConnectionFa
             dataSql, new { Search = searchParam, PageSize = request.PageSize, Offset = offset });
 
         var totalPages = (int)Math.Ceiling((double)totalItems / request.PageSize);
+
+        logger.LogInformation(
+            "GetUsers successful. TotalItems: {TotalItems}, Page: {Page}, PageSize: {PageSize}",
+            totalItems,
+            request.Page,
+            request.PageSize);
 
         return new PagedResponse<UserListItemResponse>(
             items.ToList(), totalItems, totalPages, request.Page, request.PageSize);

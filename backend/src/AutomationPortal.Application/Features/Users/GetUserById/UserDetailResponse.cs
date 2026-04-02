@@ -1,7 +1,7 @@
 namespace AutomationPortal.Application.Features.Users.GetUserById;
 
 public sealed record UserDetailResponse(
-    Guid UserId,
+    Guid Id,
     string FirstName,
     string LastName,
     string Username,

@@ -81,7 +81,7 @@ export default function DataPagination({
                 }}
                 className="cursor-pointer h-8 px-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Previous
+                Trang trước
               </Button>
             </PaginationItem>
 
@@ -118,7 +118,7 @@ export default function DataPagination({
                 }}
                 className="cursor-pointer h-8 px-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next
+                Trang sau
               </Button>
             </PaginationItem>
           </PaginationContent>

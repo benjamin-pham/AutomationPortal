@@ -6,21 +6,22 @@ import { DataTable, type DataSorting } from "@/components/table/data-table";
 import DataPagination from "@/components/table/data-pagination";
 import { Card, CardContent } from "@/components/ui/card";
 import axiosClientInstance from "@/api/axiosClientInstance";
-import { getListUser } from "@/api/users/getListUser";
-import type { PagedResponse, UserListItem } from "@/api/users/types";
+import mainApi from "@/api";
+import type { UserListItem } from "@/api/users/types";
 import { getUsersColumns } from "./users-columns";
 import ViewUserDialog from "./view-user-dialog";
 import CreateUserDialog from "./create-user-dialog";
 import EditUserDialog from "./edit-user-dialog";
 import DeleteUserDialog from "./delete-user-dialog"
 import ResetPasswordDialog from "./reset-password-dialog";
+import { PagedList } from "@/types/PagedList";
 
 export default function UsersTableShell() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState<DataSorting>({ column: "username", direction: "asc" });
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<PagedResponse<UserListItem> | null>(null);
+  const [data, setData] = useState<PagedList<UserListItem> | null>(null);
   const [viewUserId, setViewUserId] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editUserId, setEditUserId] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export default function UsersTableShell() {
   const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await getListUser(axiosClientInstance, {
+      const result = await mainApi(axiosClientInstance).users.getListUser({
         page,
         pageSize: 20,
         search: search || undefined,

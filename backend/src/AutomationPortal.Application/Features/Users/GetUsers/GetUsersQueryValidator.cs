@@ -6,7 +6,7 @@ public sealed class GetUsersQueryValidator : AbstractValidator<GetUsersQuery>
 {
     public GetUsersQueryValidator()
     {
-        RuleFor(x => x.Page)
+        RuleFor(x => x.PageNumber)
             .GreaterThanOrEqualTo(1).WithMessage("page phải ≥ 1.");
 
         RuleFor(x => x.PageSize)

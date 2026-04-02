@@ -12,9 +12,10 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { FormField } from "@/components/form/form-field"
+import { Input } from "@/components/ui/input"
 import axiosClientInstance from "@/api/axiosClientInstance"
 import { resetUserPassword } from "@/api/users/resetUserPassword"
-import { PasswordField } from "./form/password-field"
 
 const resetPasswordSchema = z
   .object({
@@ -82,8 +83,36 @@ export default function ResetPasswordDialog({ userId, onClose }: ResetPasswordDi
           <DialogTitle>Đặt lại mật khẩu</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 py-2">
-          <PasswordField control={form.control} name="newPassword" label="Mật khẩu mới" />
-          <PasswordField control={form.control} name="confirmPassword" label="Xác nhận mật khẩu" />
+          <FormField
+            control={form.control}
+            name="newPassword"
+            label="Mật khẩu mới"
+            required
+            render={({ field, inputProps }) => (
+              <Input
+                {...field}
+                {...inputProps}
+                type="password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+              />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            label="Xác nhận mật khẩu"
+            required
+            render={({ field, inputProps }) => (
+              <Input
+                {...field}
+                {...inputProps}
+                type="password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+              />
+            )}
+          />
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
               Hủy

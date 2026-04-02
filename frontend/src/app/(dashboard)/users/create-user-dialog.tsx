@@ -14,13 +14,9 @@ import {
 import { Button } from "@/components/ui/button"
 import axiosClientInstance from "@/api/axiosClientInstance"
 import { createUser } from "@/api/users/createUser"
-import { FirstNameField } from "./form/first-name-field"
-import { LastNameField } from "./form/last-name-field"
-import { UsernameField } from "./form/username-field"
-import { PasswordField } from "./form/password-field"
-import { EmailField } from "./form/email-field"
-import { PhoneField } from "./form/phone-field"
-import { BirthdayField } from "./form/birthday-field"
+import { FormField } from "@/components/form/form-field"
+import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
 
 const createUserSchema = z.object({
   firstName: z.string().min(1, "Họ không được để trống"),
@@ -108,14 +104,73 @@ export default function CreateUserDialog({ open, onClose, onSuccess }: CreateUse
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 py-2">
           <div className="grid grid-cols-2 gap-4">
-            <FirstNameField control={form.control} name="firstName" />
-            <LastNameField control={form.control} name="lastName" />
+            <FormField
+              control={form.control}
+              name="firstName"
+              label="Họ"
+              required
+              render={({ field, inputProps }) => (
+                <Input {...field} {...inputProps} type="text" placeholder="Nguyễn" />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              label="Tên"
+              required
+              render={({ field, inputProps }) => (
+                <Input {...field} {...inputProps} type="text" placeholder="Văn A" />
+              )}
+            />
           </div>
-          <UsernameField control={form.control} name="username" />
-          <PasswordField control={form.control} name="password" />
-          <EmailField control={form.control} name="email" />
-          <PhoneField control={form.control} name="phone" />
-          <BirthdayField control={form.control} name="birthday" />
+          <FormField
+            control={form.control}
+            name="username"
+            label="Tên đăng nhập"
+            required
+            render={({ field, inputProps }) => (
+              <Input {...field} {...inputProps} type="text" placeholder="nguyen_van_a" autoComplete="username" />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            label="Mật khẩu"
+            required
+            render={({ field, inputProps }) => (
+              <Input {...field} {...inputProps} type="password" placeholder="••••••••" autoComplete="new-password" />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            label="Email"
+            render={({ field, inputProps }) => (
+              <Input {...field} {...inputProps} type="email" placeholder="example@email.com" />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            label="Số điện thoại"
+            render={({ field, inputProps }) => (
+              <Input {...field} {...inputProps} type="tel" placeholder="0912345678" />
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="birthday"
+            label="Ngày sinh"
+            render={({ field, inputProps }) => (
+              <DatePicker
+                value={field.value}
+                onChange={field.onChange}
+                id={inputProps.id}
+                aria-invalid={inputProps["aria-invalid"]}
+                aria-describedby={inputProps["aria-describedby"]}
+              />
+            )}
+          />
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
               Hủy

@@ -64,9 +64,9 @@ src/
 
 # Key Patterns
 
-**Endpoint registration** — Implement `IEndpoint`, place in `src/AutomationPortal.API/Endpoints/`. The endpoint is picked up automatically; no manual registration needed.
+**Endpoint registration** — Implement `IEndpoint`, place in `src/AutomationPortal.API/Endpoints/`. The endpoint is picked up automatically; no manual registration needed. Do not create a separate request DTO - use Command/Query record.
 
-**Commands/Queries** — Add a MediatR `IRequest<Result<T>>` + handler in `src/AutomationPortal.Application/Features/{Feature}/`. Add a FluentValidation `AbstractValidator<TRequest>` in the same folder; the pipeline runs it automatically.
+**Commands/Queries** — Add a MediatR `IRequest<Result<T>>` + handler in `src/AutomationPortal.Application/Features/{Feature}/`. Add a FluentValidation `AbstractValidator<TRequest>` in the same folder; the pipeline runs it automatically. The Command/Query record is used directly as the API request — do not create a separate request DTO.
 
 **Result pattern** — Domain errors use `Result<T>` (not exceptions). Use `Result.Success(value)` / `Result.Failure(error)` and check `result.IsFailure` in handlers or endpoints.
 
@@ -74,17 +74,9 @@ src/
 
 **EF Core config** — Entity configurations go in `src/AutomationPortal.Infrastructure/Data/Configurations/` using Fluent API with snake_case naming convention.
 
-# Testing
+**Paged queries** — Use `PagedListSearch` as the base record for query parameters (inherits `PageNumber`, `PageSize`, `SortBy`, `SortDirection` with safe defaults and `MaxPageSize = 100`). Return `PagedList<T>` from handlers — it computes `TotalPages`, `HasNextPage`, `HasPreviousPage` automatically. Both types live in `src/AutomationPortal.Application/Shared/`.
 
-| Project | Scope | Key Dependencies |
-|---|---|---|
-| `Domain.UnitTests` | Entity logic | xunit, FluentAssertions |
-| `Application.UnitTests` | Handlers, validators, behaviors | + NSubstitute |
-| `Infrastructure.IntegrationTests` | Repositories, EF Core config | + Testcontainers (PostgreSQL), Respawn |
-| `API.IntegrationTests` | End-to-end HTTP | + WebApplicationFactory, Testcontainers, Respawn |
-| `ArchitectureTests` | Layer dependency enforcement | NetArchTest.Rules |
-
-Integration tests spin up a real PostgreSQL container via Testcontainers. Respawn resets data between tests.
+ 
 
 # Package Management
 

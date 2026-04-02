@@ -1,10 +1,10 @@
 import axiosServerInstance from "@/api/axiosServerInstance"
-import domainApi from "@/api"
+import mainApi from "@/api"
 import ProfileForm from "./profile-form"
 
 export default async function ProfilePage() {
   const axios = await axiosServerInstance()
-  const { data: profile } = await domainApi(axios).auth.getProfile()()
+  const { data: profile } = await mainApi(axios).auth.getProfile()()
 
   return (
     <div className="max-w-lg">

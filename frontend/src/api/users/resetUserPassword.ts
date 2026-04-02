@@ -1,5 +1,9 @@
 import type { AxiosInstance } from "axios";
-import type { ResetPasswordRequest } from "./types";
+
+export interface ResetPasswordRequest {
+  newPassword: string;
+  confirmPassword: string;
+}
 
 export async function resetUserPassword(
   axios: AxiosInstance,

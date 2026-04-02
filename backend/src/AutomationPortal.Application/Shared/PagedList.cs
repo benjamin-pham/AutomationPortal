@@ -1,8 +1,8 @@
 namespace AutomationPortal.Application.Shared;
 
-public abstract class PagedList<TItem>
+public class PagedList<TItem>
 {
-    protected PagedList(List<TItem> items, int pageNumber, int pageSize, int totalCount)
+    public PagedList(List<TItem> items, int pageNumber, int pageSize, int totalCount)
     {
         Items = items;
         PageNumber = pageNumber;

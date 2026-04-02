@@ -44,30 +44,44 @@ src/app/(dashboard)/users/
 ├── page.tsx
 ├── users-table.tsx        # page-specific components live here
 ├── users-filter-bar.tsx
-└── form/                  # form field renders split into per-field files
-    ├── name-field.tsx
-    ├── email-field.tsx
-    └── role-field.tsx
+├── users-create-dialog.tsx
 ```
-
-**Form field rule**: each `<FormField render={...} />` block must be extracted into its own file inside a `form/` subdirectory at the same level as `page.tsx`. Never inline multiple `FormField` render props directly in the page or a single form component file.
 
 ### Component library
 
 UI primitives live in `src/components/ui/` — these are shadcn-style components built on `radix-ui` and styled with Tailwind CSS v4. Use these rather than raw Radix primitives.
 
 Key custom composites:
-- **`DataTable` / `DataTableColumnHeader`** (`src/components/table/data-table.tsx`) — wraps TanStack Table with server-side sorting, loading state, and empty state. Sorting/filtering is `manual` — pass `onSortChange` to handle server-side sorting.
+- **`DataTable` / `DataTableColumnHeader` / `DataPagination`** (`src/components/table/data-table.tsx`) — wraps TanStack Table with server-side sorting, loading state, and empty state. Sorting/filtering is `manual` — pass `onSortChange` to handle server-side sorting.
 - **`FormField`** (`src/components/form/form-field.tsx`) — wraps `react-hook-form` `Controller` with `Field`/`FieldLabel`/`FieldError` layout and accessibility wiring. Use its `render` prop and spread `inputProps` onto the input element.
+
+## DataTable Usage
+
+The `DataTable` component supports row-level actions with icons and tooltips. Actions are defined via the `actions` prop, which is an array of action objects.
+
+### Action Structure
+
+Each action object has the following properties:
+- `icon`: React node (e.g., Lucide icon component)
+- `tooltip`: String for tooltip text
+- `onClick`: Function that receives the row data as parameter
+- `label`: String for dropdown menu item text
+
+### Action Rendering Logic
+
+- **Less than 3 actions**: Actions are rendered as individual icon buttons with tooltips.
+- **3 or more actions**: Actions are grouped in a dropdown menu triggered by a "More" icon (MoreVertical). The dropdown items display the action labels instead of icons.
 
 ### API calls — axios instances
 
-All API functions follow the **dependency-injection pattern**: they accept an `AxiosInstance` and return a function, then are grouped under `domainApi(axios)`.
+All API functions follow the **dependency-injection pattern**: they accept an `AxiosInstance` and return a function, then are grouped under `mainApi(axios)`.
+
+**Important:** Only use `mainApi(axios)` with the injected `axiosServerInstance` or `axiosClientInstance`. Do not call endpoint functions directly.
 
 Key files:
 - `src/api/axiosServerInstance.ts` — async factory, Server Components only
 - `src/api/axiosClientInstance.ts` — plain instance, Client Components only
-- `src/api/index.ts` — `domainApi(axios)` aggregates all domain groups
+- `src/api/index.ts` — `mainApi(axios)` aggregates all domain groups
 
 #### `axiosServerInstance` — Server Components only
 
@@ -83,12 +97,13 @@ Plain pre-configured `axios` instance — reads `authToken` from `localStorage`,
 | Usage | `const axios = await axiosServerInstance()` | import directly (not async) |
 | Auth source | `accessToken` cookie (via `next/headers`) | `authToken` in `localStorage` |
 
-#### Adding a new API domain
+#### Adding a new API
 
 1. Create `src/api/{entity}/` folder (e.g. `src/api/users/`)
-2. One file per function inside that folder
-3. `src/api/{entity}/index.ts` — aggregate functions into `{entity}Api(axios)`, following the pattern in `src/api/auth/index.ts`
-4. Register in `src/api/index.ts` — add a new key to the `domainApi` return object
+2. One file per endpoint inside that folder.
+3. In each endpoint file, define Request and Response DTOs alongside the API function, using the `{EndpointName}Request` and `{EndpointName}Response` naming pattern.
+4. `src/api/{entity}/index.ts` — aggregate functions into `{entity}Api(axios)`, following the pattern in `src/api/auth/index.ts`
+5. Register in `src/api/index.ts` — add a new key to the `mainApi` return object
 
 ### Utilities
 

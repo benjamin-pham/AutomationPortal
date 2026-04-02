@@ -2,15 +2,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { RowActionsCell, type RowAction } from "@/components/table/row-actions-cell";
 import type { UserListItem } from "@/api/users/types";
 
 export function getUsersColumns(
@@ -61,29 +53,26 @@ export function getUsersColumns(
     {
       id: "actions",
       header: () => null,
-      cell: ({ row }) => (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onEdit(row.original.id)}>
-              Chỉnh sửa
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onResetPassword(row.original.id)}>
-              Đặt lại mật khẩu
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onDelete(row.original.id, row.original.username)}>
-              Xóa
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ),
+      cell: ({ row }) => {
+        const actions: RowAction[] = [
+          {
+            label: "Chỉnh sửa",
+            onClick: () => onEdit(row.original.id),
+          },
+          {
+            label: "Đặt lại mật khẩu",
+            onClick: () => onResetPassword(row.original.id),
+          },
+          {
+            label: "Xóa",
+            onClick: () => onDelete(row.original.id, row.original.username),
+            variant: "destructive",
+            divider: true,
+          },
+        ];
+
+        return <RowActionsCell actions={actions} />;
+      },
     },
   ];
 }

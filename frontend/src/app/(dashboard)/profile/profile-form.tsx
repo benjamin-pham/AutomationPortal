@@ -9,7 +9,7 @@ import { AxiosError } from "axios"
 
 import { ProfileResponse } from "@/api/auth/getProfile"
 import axiosClientInstance from "@/api/axiosClientInstance"
-import domainApi from "@/api"
+import mainApi from "@/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FormField } from "@/components/form/form-field"
@@ -42,7 +42,7 @@ export default function ProfileForm({ profile }: { profile: ProfileResponse }) {
   async function onSubmit(values: FormValues) {
     setIsLoading(true)
     try {
-      await domainApi(axiosClientInstance).auth.updateProfile({
+      await mainApi(axiosClientInstance).auth.updateProfile({
         ...values,
         email: values.email || null,
         phone: values.phone || null,

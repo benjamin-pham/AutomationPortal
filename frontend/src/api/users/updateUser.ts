@@ -1,5 +1,12 @@
 import type { AxiosInstance } from "axios";
-import type { UpdateUserRequest } from "./types";
+
+export interface UpdateUserRequest {
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  birthday?: string;
+}
 
 export async function updateUser(
   axios: AxiosInstance,

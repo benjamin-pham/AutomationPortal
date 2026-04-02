@@ -4,28 +4,29 @@ using AutomationPortal.Application.Abstractions.Messaging;
 using AutomationPortal.Application.Shared.Dtos;
 using AutomationPortal.Domain.Abstractions;
 using Microsoft.Extensions.Logging;
+using AutomationPortal.Application.Shared;
 
 namespace AutomationPortal.Application.Features.Users.GetUsers;
 
 internal sealed class GetUsersQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory,
     ILogger<GetUsersQueryHandler> logger)
-    : IQueryHandler<GetUsersQuery, PagedResponse<UserListItemResponse>>
+    : IQueryHandler<GetUsersQuery, PagedList<UserListItemResponse>>
 {
     private static readonly HashSet<string> AllowedSortColumns =
     [
         "first_name", "last_name", "username", "email", "phone", "birthday"
     ];
 
-    public async Task<Result<PagedResponse<UserListItemResponse>>> Handle(
+    public async Task<Result<PagedList<UserListItemResponse>>> Handle(
         GetUsersQuery request,
         CancellationToken cancellationToken)
     {
-        var safeColumn = AllowedSortColumns.Contains(request.SortColumn ?? "")
-            ? request.SortColumn!
+        var safeColumn = AllowedSortColumns.Contains(request.SortBy ?? "")
+            ? request.SortBy!
             : "username";
         var safeDirection = request.SortDirection?.ToUpperInvariant() == "DESC" ? "DESC" : "ASC";
-        var offset = (request.Page - 1) * request.PageSize;
+        var offset = (request.PageNumber - 1) * request.PageSize;
         var searchParam = string.IsNullOrWhiteSpace(request.Search) ? null : request.Search;
 
         using var connection = sqlConnectionFactory.CreateConnection();
@@ -72,10 +73,10 @@ internal sealed class GetUsersQueryHandler(
         logger.LogInformation(
             "GetUsers successful. TotalItems: {TotalItems}, Page: {Page}, PageSize: {PageSize}",
             totalItems,
-            request.Page,
+            request.PageNumber,
             request.PageSize);
 
-        return new PagedResponse<UserListItemResponse>(
-            items.ToList(), totalItems, totalPages, request.Page, request.PageSize);
+        return new PagedList<UserListItemResponse>(
+            items.ToList(), request.PageNumber, request.PageSize, totalItems);
     }
 }

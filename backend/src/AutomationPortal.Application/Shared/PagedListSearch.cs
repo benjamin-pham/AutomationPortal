@@ -1,6 +1,6 @@
 namespace AutomationPortal.Application.Shared;
 
-public abstract class PagedListSearch
+public record PagedListSearch
 {
     private const int DefaultPageNumber = 1;
     private const int DefaultPageSize = 10;

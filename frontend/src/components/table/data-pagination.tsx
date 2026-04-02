@@ -98,7 +98,7 @@ export default function DataPagination({
                       onPageChange(p as number);
                     }}
                     className={`cursor-pointer h-8 min-w-8 px-2 py-0 rounded-md border flex items-center justify-center text-sm font-medium ${p === pageIndex
-                      ? "bg-black text-white border-black"
+                      ? "bg-primary text-primary-foreground border-primary"
                       : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >

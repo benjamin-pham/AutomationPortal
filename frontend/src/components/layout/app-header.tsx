@@ -27,13 +27,13 @@ const AppHeader = () => {
         <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className='cursor-pointer'>
+            <Button variant="outline" size="icon" className='cursor-pointer'>
               <CircleUserRound className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href="/profile" className="flex items-center gap-2 cursor-pointer">
+            <DropdownMenuItem asChild >
+              <Link href="/profile" className="flex items-center gap-2 cursor-pointer" >
                 <UserRound className="h-4 w-4" />
                 Thông tin cá nhân
               </Link>

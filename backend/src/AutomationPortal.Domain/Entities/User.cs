@@ -72,4 +72,12 @@ public sealed class User : BaseEntity
         HashedRefreshToken = null;
         RefreshTokenExpiresAt = null;
     }
+
+    public void ResetPassword(string newPasswordHash)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(newPasswordHash);
+
+        PasswordHash = newPasswordHash;
+        RevokeRefreshToken();
+    }
 }

@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 

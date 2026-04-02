@@ -2,7 +2,7 @@
 import { SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from '@/components/ui/sidebar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { ChevronDown, LayoutDashboard, Package2, Boxes, Circle, ScrollText, BookText, BookCopy, NotebookTabs, ShoppingBag, BookUser, type LucideIcon } from "lucide-react";
+import { ChevronDown, LayoutDashboard, type LucideIcon, SquareKanban, PackageSearch } from "lucide-react";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -20,52 +20,22 @@ const items: IMenuItem[] = [
     icon: LayoutDashboard,
   },
   {
-    title: "Products",
-    icon: Package2,
+    title: "Reports",
+    icon: SquareKanban,
     subItems: [
       {
-        title: "Product List",
-        url: "/products",
-        icon: ScrollText,
-      },
-      {
-        title: "Categories",
-        url: "/products/categories",
-        icon: Boxes,
-      },
-      {
-        title: "Brands",
-        url: "/products/brands",
-        icon: Circle,
+        title: "Services",
+        url: "/reports/services",
+        icon: PackageSearch,
       }
+
     ]
   },
   {
-    title: "Posts",
-    icon: BookText,
-    subItems: [
-      {
-        title: "Post List",
-        url: "/posts",
-        icon: NotebookTabs,
-      },
-      {
-        title: "Categories",
-        url: "/posts/categories",
-        icon: BookCopy,
-      }
-    ]
+    title: "Datatable demo",
+    url: "/datatable",
+    icon: LayoutDashboard,
   },
-  {
-    title: "Orders",
-    icon: ShoppingBag,
-    url: "/orders"
-  },
-  {
-    title: "Customers",
-    icon: BookUser,
-    url: "/customers"
-  }
 ]
 function AppSidebarContent() {
   return (
@@ -88,10 +58,14 @@ function RenderMenuItem({ item }: { item: IMenuItem }) {
   const isCollapsed = state === "collapsed";
   const pathname = usePathname();
   const isActive = (item: IMenuItem) => {
-    if (item.url && pathname === item.url)
+    if (item.url && (pathname === item.url || pathname.startsWith(item.url + "/")))
       return true;
     if (item.subItems) {
-      return item.subItems.some((subItem: IMenuItem) => pathname === subItem.url);
+      return item.subItems.some(
+        (subItem: IMenuItem) =>
+          subItem.url &&
+          (pathname === subItem.url || pathname.startsWith(subItem.url + "/"))
+      );
     }
     return false;
   }

@@ -76,8 +76,6 @@ src/
 
 **Paged queries** — Use `PagedListSearch` as the base record for query parameters (inherits `PageNumber`, `PageSize`, `SortBy`, `SortDirection` with safe defaults and `MaxPageSize = 100`). Return `PagedList<T>` from handlers — it computes `TotalPages`, `HasNextPage`, `HasPreviousPage` automatically. Both types live in `src/AutomationPortal.Application/Shared/`.
 
- 
-
 # Package Management
 
 All NuGet versions are centrally managed in `Directory.Packages.props`. Do not set `Version` on `<PackageReference>` in individual project files; use `VersionOverride` only when necessary.

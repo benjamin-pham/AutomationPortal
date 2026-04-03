@@ -33,7 +33,47 @@ The sidebar (`src/components/layout/`) renders differently based on collapse sta
 - **Expanded**: collapsible sub-menus using `Collapsible`
 - **Collapsed (icon-only)**: sub-menus appear as `Popover` flyouts
 
-To add a new sidebar nav item, edit the `items` array in `src/components/layout/app-sidebar-content.tsx`.
+To add a new sidebar nav item, edit the `menuItems` array in `src/components/layout/menu-item.tsx`.
+
+### Adding a new page with a menu entry
+
+**Step 1 — Create the page** following the page structure convention above (e.g. `src/app/(dashboard)/my-page/page.tsx`).
+
+**Step 2 — Register the menu item** in `src/components/layout/menu-item.tsx`:
+
+```ts
+import { MyIcon } from "lucide-react";
+
+export const menuItems: IMenuItem[] = [
+    // ... existing items
+    {
+        title: "My Page",
+        url: "/my-page",
+        icon: MyIcon,
+    },
+]
+```
+
+For a top-level item with sub-pages, omit `url` and add `subItems`:
+
+```ts
+{
+    title: "My Section",
+    icon: MyIcon,
+    subItems: [
+        { title: "Sub Page", url: "/my-section/sub-page", icon: AnotherIcon },
+    ],
+},
+```
+
+`IMenuItem` shape:
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `title` | `string` | yes | Label shown in sidebar |
+| `url` | `string` | no | Route path — omit if item is a group with `subItems` |
+| `icon` | `LucideIcon` | yes | Icon from `lucide-react` |
+| `subItems` | `IMenuItem[]` | no | Child items (rendered as collapsible list or popover flyout) |
 
 ### Page structure conventions
 

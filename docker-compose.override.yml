@@ -1,0 +1,39 @@
+# docker-compose.override.yml — applied automatically on top of docker-compose.yml
+# Tweaks for LOCAL DEVELOPMENT only (not used in production/CI).
+
+name: automation-portal
+
+services:
+  db:
+    # Expose pg port locally for tools like DBeaver / pgAdmin
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+
+  seq:
+    # Ingest on 5342, UI on 5341 (http://localhost:5341)
+    ports:
+      - "${SEQ_UI_PORT:-5341}:80"
+      - "${SEQ_INGEST_PORT:-5342}:5341"
+
+  backend:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    # Rebuild automatically on changes via `docker compose watch`
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/src
+          ignore:
+            - "**/bin/**"
+            - "**/obj/**"
+
+  frontend:
+    environment:
+      NODE_ENV: development
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/src
+        - action: sync+restart
+          path: ./frontend/public
+          target: /app/public

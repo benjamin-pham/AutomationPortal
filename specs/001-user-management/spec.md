@@ -15,6 +15,8 @@
 - Q: Username format hợp lệ? → A: Chỉ chữ cái và số `[a-zA-Z0-9]`, tối thiểu 6, tối đa 50 ký tự (theo UsernameValidator hiện có)
 - Q: Xử lý concurrent edit (2 người sửa cùng lúc)? → A: Last write wins — không kiểm tra conflict
 
+### Session 2026-04-02
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Danh sách và tìm kiếm người dùng (Priority: P1)

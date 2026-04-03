@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // Create axios client instance for client-side API calls
+// NEXT_PUBLIC_APP_URL is the Next.js host — client calls go through /api proxy
 const axiosClientInstacne = axios.create({
-  baseURL: 'http://localhost:3000', // Default to '/api' if env not set
+  baseURL: typeof window !== 'undefined' ? window.location.origin : '',
   headers: {
     'Content-Type': 'application/json',
   },

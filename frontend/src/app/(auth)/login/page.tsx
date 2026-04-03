@@ -42,6 +42,7 @@ export default function LoginPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
+        console.log('Login failed with response:', res, 'and data:', data)
         toast.error(data?.detail ?? data?.message ?? "Đăng nhập thất bại")
         setIsLoading(false)
         return
@@ -82,7 +83,14 @@ export default function LoginPage() {
           <CardDescription>Nhập thông tin tài khoản để tiếp tục</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form
+            method="POST"
+            onSubmit={(e) => {
+              e.preventDefault()
+              form.handleSubmit(onSubmit)(e)
+            }}
+            className="flex flex-col gap-4"
+          >
             <FormField
               control={form.control}
               name="username"

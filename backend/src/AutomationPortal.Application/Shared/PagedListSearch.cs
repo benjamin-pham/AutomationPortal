@@ -9,16 +9,16 @@ public record PagedListSearch
     private int _pageNumber = DefaultPageNumber;
     private int _pageSize = DefaultPageSize;
 
-    public int PageNumber
+    public int? PageNumber
     {
         get => _pageNumber;
-        init => _pageNumber = value < 1 ? DefaultPageNumber : value;
+        init => _pageNumber = (value ?? DefaultPageNumber) < 1 ? DefaultPageNumber : (value ?? DefaultPageNumber);
     }
 
-    public int PageSize
+    public int? PageSize
     {
         get => _pageSize;
-        init => _pageSize = value < 1 ? DefaultPageSize : Math.Min(value, MaxPageSize);
+        init => _pageSize = (value ?? DefaultPageSize) < 1 ? DefaultPageSize : Math.Min((value ?? DefaultPageSize), MaxPageSize);
     }
 
     public string? SortBy { get; init; }

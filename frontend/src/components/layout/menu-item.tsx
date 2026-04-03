@@ -1,4 +1,4 @@
-import { BookUser, LayoutDashboard, LucideIcon, PackageSearch, SquareKanban } from "lucide-react";
+import { BookUser, KeyRound, LayoutDashboard, LucideIcon, PackageSearch, SquareKanban } from "lucide-react";
 
 export interface IMenuItem {
     title: string;
@@ -17,6 +17,11 @@ export const menuItems: IMenuItem[] = [
         title: "Users",
         url: "/users",
         icon: BookUser,
+    },
+    {
+        title: "Gemini Keys",
+        url: "/gemini-keys",
+        icon: KeyRound,
     },
     {
         title: "Reports",

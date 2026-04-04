@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios'
 import { cookies } from 'next/headers'
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const BACKEND_URL = process.env.API_URL ?? 'http://localhost:5178'
+const BACKEND_URL = process.env.API_URL ?? 'http://172.26.0.14:5000'
 interface TokenResponse {
   accessToken: string;
   refreshToken: string;

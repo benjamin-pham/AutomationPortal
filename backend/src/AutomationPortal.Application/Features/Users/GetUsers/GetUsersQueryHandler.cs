@@ -26,7 +26,9 @@ internal sealed class GetUsersQueryHandler(
             ? request.SortBy!
             : "username";
         var safeDirection = request.SortDirection?.ToUpperInvariant() == "DESC" ? "DESC" : "ASC";
-        var offset = (request.PageNumber - 1) * request.PageSize;
+        var pageNumber = request.PageNumber ?? 1;
+        var pageSize = request.PageSize ?? 10;
+        var offset = (pageNumber - 1) * pageSize;
         var searchParam = string.IsNullOrWhiteSpace(request.Search) ? null : request.Search;
 
         using var connection = sqlConnectionFactory.CreateConnection();
@@ -66,17 +68,17 @@ internal sealed class GetUsersQueryHandler(
             """;
 
         var items = await connection.QueryAsync<UserListItemResponse>(
-            dataSql, new { Search = searchParam, PageSize = request.PageSize, Offset = offset });
+            dataSql, new { Search = searchParam, PageSize = pageSize, Offset = offset });
 
-        var totalPages = (int)Math.Ceiling((double)totalItems / request.PageSize);
+        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
         logger.LogInformation(
             "GetUsers successful. TotalItems: {TotalItems}, Page: {Page}, PageSize: {PageSize}",
             totalItems,
-            request.PageNumber,
-            request.PageSize);
+            pageNumber,
+            pageSize);
 
         return new PagedList<UserListItemResponse>(
-            items.ToList(), request.PageNumber, request.PageSize, totalItems);
+            items.ToList(), pageNumber, pageSize, totalItems);
     }
 }

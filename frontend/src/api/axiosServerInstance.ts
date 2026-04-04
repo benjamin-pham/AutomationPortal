@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 const axiosServerInstance = async (): Promise<AxiosInstance> => {
   const instance = axios.create({
-    baseURL: 'http://localhost:5178', // Default to backend URL
+    baseURL: process.env.API_URL ?? 'http://172.26.0.14:5000',
   });
 
   // 👉 attach token từ cookie của Next server
@@ -23,6 +23,7 @@ const axiosServerInstance = async (): Promise<AxiosInstance> => {
   instance.interceptors.response.use(
     (res) => res,
     (error) => {
+      console.log(error)
       return Promise.reject(error);
     }
   );

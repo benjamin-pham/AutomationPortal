@@ -1,85 +1,98 @@
-name: automation-portal
-
 services:
-  # ── PostgreSQL ────────────────────────────────────────────────────────────────
+  # ── PostgreSQL ─────────────────────────────
   db:
     image: postgres:17
-    container_name: ap_db
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - ap_network
+      - dokploy-network
 
-  # ── Seq (structured log viewer) ───────────────────────────────────────────────
+  # ── Seq Logging ────────────────────────────
   seq:
     image: datalust/seq:latest
-    container_name: ap_seq
-    restart: unless-stopped
+    restart: always
     environment:
       ACCEPT_EULA: "Y"
       SEQ_FIRSTRUN_ADMINPASSWORD: "123456"
-    ports:
-      - "${SEQ_UI_PORT}:80"
     volumes:
       - seq_data:/data
     networks:
-      - ap_network
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.seq.rule=Host(`seq.auto.matbaohosting.com`)"
+      - "traefik.http.routers.seq.entrypoints=websecure"
+      - "traefik.http.routers.seq.tls.certResolver=letsencrypt"
+      - "traefik.http.services.seq.loadbalancer.server.port=80"
 
-  # ── .NET 10 Backend API ───────────────────────────────────────────────────────
+  # ── Backend (.NET) ─────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: ap_backend
-    restart: unless-stopped
+    restart: always
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__Database: >-
-        Host=db;Port=5432;Database=${POSTGRES_DB};
-        Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__Database: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       Authentication__Jwt__SecretKey: ${JWT_SECRET_KEY}
       Authentication__Jwt__Issuer: ${JWT_ISSUER}
       Authentication__Jwt__Audience: ${JWT_AUDIENCE}
-      Serilog__WriteTo__3__Args__serverUrl: ${SEQ_URL}
+      Serilog__WriteTo__3__Args__serverUrl: http://seq:80
       Serilog__WriteTo__3__Args__apiKey: ${SEQ_API_KEY}
     ports:
-      - "${BACKEND_PORT}:5000"
+      - 5000
     volumes:
       - backend_logs:/app/logs
     networks:
-      - ap_network
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.auto.matbaohosting.com`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certResolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=5000"
+    depends_on:
+      - db
+      - seq
 
-  # ── Next.js 16 Frontend ───────────────────────────────────────────────────────
+  # ── Frontend (Next.js) ─────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
         API_URL: ${API_URL}
-    container_name: ap_frontend
-    restart: unless-stopped
+    restart: always
     environment:
       NODE_ENV: production
       API_URL: ${API_URL}
-      HOSTNAME: "0.0.0.0"
+      HOSTNAME: 0.0.0.0
     ports:
-      - "${FRONTEND_PORT}:3010"
+      - 3010
     networks:
-      - ap_network
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`auto.matbaohosting.com`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certResolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3010"
+    depends_on:
+      - backend
 
+# ── Volumes ────────────────────────────────
 volumes:
   postgres_data:
   seq_data:
   backend_logs:
 
+# ── Networks ───────────────────────────────
 networks:
-  ap_network:
-    driver: bridge
+  dokploy-network:
+    external: true

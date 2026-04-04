@@ -73,8 +73,6 @@ services:
       NODE_ENV: production
       API_URL: ${API_URL}
       HOSTNAME: 0.0.0.0
-    ports:
-      - 3010:3000
     networks:
       - dokploy-network
     labels:

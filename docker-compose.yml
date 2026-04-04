@@ -74,7 +74,7 @@ services:
       API_URL: ${API_URL}
       HOSTNAME: 0.0.0.0
     ports:
-      - 3010
+      - 3010:3000
     networks:
       - dokploy-network
     labels:
@@ -82,17 +82,15 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`auto.matbaohosting.com`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certResolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3010"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     depends_on:
       - backend
 
-# ── Volumes ────────────────────────────────
 volumes:
   postgres_data:
   seq_data:
   backend_logs:
 
-# ── Networks ───────────────────────────────
 networks:
   dokploy-network:
     external: true

@@ -1,8 +1,10 @@
+name: automation-portal
+
 services:
-  # ── PostgreSQL ─────────────────────────────
+  # ── PostgreSQL ────────────────────────────────────────────────────────────────
   db:
     image: postgres:17
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -12,77 +14,104 @@ services:
     networks:
       - dokploy-network
 
-  # ── Seq Logging ────────────────────────────
+  # ── Seq (structured log viewer) ───────────────────────────────────────────────
   seq:
     image: datalust/seq:latest
-    restart: always
+    restart: unless-stopped
     environment:
       ACCEPT_EULA: "Y"
-      SEQ_FIRSTRUN_ADMINPASSWORD: "123456"
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD}
     volumes:
       - seq_data:/data
     networks:
       - dokploy-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.seq.rule=Host(`seq.auto.matbaohosting.com`)"
-      - "traefik.http.routers.seq.entrypoints=websecure"
-      - "traefik.http.routers.seq.tls.certResolver=letsencrypt"
-      - "traefik.http.services.seq.loadbalancer.server.port=80"
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.ap-seq-web.rule=Host(`seq.auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-seq-web.entrypoints=web"
+      - "traefik.http.routers.ap-seq-web.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.ap-seq-web.service=ap-seq-web"
+      - "traefik.http.services.ap-seq-web.loadbalancer.server.port=80"
+      # HTTPS
+      - "traefik.http.routers.ap-seq-websecure.rule=Host(`seq.auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-seq-websecure.entrypoints=websecure"
+      - "traefik.http.routers.ap-seq-websecure.tls=true"
+      - "traefik.http.routers.ap-seq-websecure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ap-seq-websecure.service=ap-seq-websecure"
+      - "traefik.http.services.ap-seq-websecure.loadbalancer.server.port=80"
 
-  # ── Backend (.NET) ─────────────────────────
+  # ── .NET 10 Backend API ───────────────────────────────────────────────────────
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ASPNETCORE_URLS: http://+:5000
-      ConnectionStrings__Database: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__Database: >-
+        Host=db;Port=5432;Database=${POSTGRES_DB};
+        Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
       Authentication__Jwt__SecretKey: ${JWT_SECRET_KEY}
       Authentication__Jwt__Issuer: ${JWT_ISSUER}
       Authentication__Jwt__Audience: ${JWT_AUDIENCE}
       Serilog__WriteTo__3__Args__serverUrl: http://seq:80
       Serilog__WriteTo__3__Args__apiKey: ${SEQ_API_KEY}
-    ports:
-      - 5000
     volumes:
       - backend_logs:/app/logs
     networks:
       - dokploy-network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.auto.matbaohosting.com`)"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certResolver=letsencrypt"
-      - "traefik.http.services.backend.loadbalancer.server.port=5000"
     depends_on:
       - db
       - seq
+    labels:
+      - "traefik.enable=true"
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.ap-backend-web.rule=Host(`api.auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-backend-web.entrypoints=web"
+      - "traefik.http.routers.ap-backend-web.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.ap-backend-web.service=ap-backend-web"
+      - "traefik.http.services.ap-backend-web.loadbalancer.server.port=5000"
+      # HTTPS
+      - "traefik.http.routers.ap-backend-websecure.rule=Host(`api.auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-backend-websecure.entrypoints=websecure"
+      - "traefik.http.routers.ap-backend-websecure.tls=true"
+      - "traefik.http.routers.ap-backend-websecure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ap-backend-websecure.service=ap-backend-websecure"
+      - "traefik.http.services.ap-backend-websecure.loadbalancer.server.port=5000"
 
-  # ── Frontend (Next.js) ─────────────────────
+  # ── Next.js 16 Frontend ───────────────────────────────────────────────────────
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        API_URL: ${API_URL}
-    restart: always
+        API_URL: https://api.auto.matbaohosting.com
+    restart: unless-stopped
     environment:
       NODE_ENV: production
-      API_URL: ${API_URL}
-      HOSTNAME: 0.0.0.0
+      API_URL: https://api.auto.matbaohosting.com
+      HOSTNAME: "0.0.0.0"
     networks:
       - dokploy-network
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`auto.matbaohosting.com`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certResolver=letsencrypt"
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
     depends_on:
       - backend
+    labels:
+      - "traefik.enable=true"
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.ap-frontend-web.rule=Host(`auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-frontend-web.entrypoints=web"
+      - "traefik.http.routers.ap-frontend-web.middlewares=redirect-to-https@file"
+      - "traefik.http.routers.ap-frontend-web.service=ap-frontend-web"
+      - "traefik.http.services.ap-frontend-web.loadbalancer.server.port=3000"
+      # HTTPS
+      - "traefik.http.routers.ap-frontend-websecure.rule=Host(`auto.matbaohosting.com`)"
+      - "traefik.http.routers.ap-frontend-websecure.entrypoints=websecure"
+      - "traefik.http.routers.ap-frontend-websecure.tls=true"
+      - "traefik.http.routers.ap-frontend-websecure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ap-frontend-websecure.service=ap-frontend-websecure"
+      - "traefik.http.services.ap-frontend-websecure.loadbalancer.server.port=3000"
 
 volumes:
   postgres_data:

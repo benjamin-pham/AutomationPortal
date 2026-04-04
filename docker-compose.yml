@@ -71,7 +71,7 @@ services:
       API_URL: ${API_URL}
       HOSTNAME: "0.0.0.0"
     ports:
-      - "${FRONTEND_PORT}:3000"
+      - "${FRONTEND_PORT}:3010"
     networks:
       - ap_network
 
